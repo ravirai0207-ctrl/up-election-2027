@@ -85,35 +85,7 @@ election-2027/
 
 ## 💻 Local Quickstart
 
-### Method 1: Direct File Access
-Simply double-click `index.html` or open it directly in Safari, Chrome, Edge, or Firefox:
-```bash
-open index.html
-```
-*(The standalone data script architecture ensures 100% offline functionality without CORS issues.)*
-
-### Method 2: Local HTTP Server
-Run with Python:
-```bash
-python3 -m http.server 8080
-```
-Then navigate to: **[http://localhost:8080](http://localhost:8080)**
-
----
-
-## ☁️ Deploying to Vercel
-
-### Option 1: Via Vercel Web Dashboard (1-Click)
-1. Push this repository to your GitHub account (`ravirai0207-ctrl`).
-2. Go to **[vercel.com/new](https://vercel.com/new)** and log in with GitHub.
-3. Select this repository and click **Deploy**.
-4. Vercel will automatically detect the static site and deploy it in seconds with a free `.vercel.app` URL and global CDN!
-
-### Option 2: Via GitHub Pages
-1. On GitHub, navigate to **Settings** > **Pages**.
-2. Under **Build and deployment** > **Source**, select **Deploy from a branch**.
-3. Choose the `main` branch and `/ (root)` folder, then click **Save**.
-4. Your site will be live at `https://ravirai0207-ctrl.github.io/<repo-name>/`.
+-**Link** https://ravirai0207-ctrl.github.io/up-election-2027/
 
 ---
 
