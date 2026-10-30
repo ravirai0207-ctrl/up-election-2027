@@ -1,0 +1,6 @@
+.DS_Store
+*.log
+up_ac_raw.geojson
+up_ac_simplified.geojson
+up_map_data.geojson
+constituencies_complete.json

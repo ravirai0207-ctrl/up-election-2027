@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UP Election 2027 Dashboard | 403 Constituencies, MLAs & Historical Trends</title>
+  <meta name="description" content="Comprehensive Uttar Pradesh Assembly Election 2027 Intelligence Portal. Interactive map of all 403 constituencies, current MLAs, party tally, and multi-year result comparisons for 2017, 2019, 2022, and 2024.">
+  
+  <!-- Google Fonts: Plus Jakarta Sans & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Leaflet CSS for Map -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <!-- Chart.js for Constituency Distribution Charts -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Header / Navigation -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand-group">
+        <div class="emblem-badge">
+          <img src="assets/images/vidhan_bhavan.jpg" alt="UP Vidhan Bhavan" class="emblem-thumb">
+          <div class="badge-pulse"></div>
+        </div>
+        <div class="brand-titles">
+          <div class="brand-badge-row">
+            <span class="status-pill"><span class="dot"></span> UP Vidhan Sabha 2027</span>
+            <span class="seat-count-tag">403 Seats &bull; 202 Majority Mark</span>
+          </div>
+          <h1 class="brand-title">Uttar Pradesh Assembly Election Hub</h1>
+          <p class="brand-sub">उत्तर प्रदेश विधानसभा चुनाव &bull; Complete 403 Seat MLA Directory, Interactive Map & Historical Trends</p>
+        </div>
+      </div>
+
+      <!-- Quick Assembly Summary Tally Bar -->
+      <div class="header-stats-wrapper">
+        <div class="quick-stat-box bjp-stat">
+          <span class="stat-name">BJP</span>
+          <span class="stat-num" id="hdr-bjp-count">252</span>
+          <span class="stat-tag">NDA</span>
+        </div>
+        <div class="quick-stat-box sp-stat">
+          <span class="stat-name">SP</span>
+          <span class="stat-num" id="hdr-sp-count">111</span>
+          <span class="stat-tag">INDIA</span>
+        </div>
+        <div class="quick-stat-box ads-stat">
+          <span class="stat-name">AD(S)</span>
+          <span class="stat-num" id="hdr-ads-count">13</span>
+          <span class="stat-tag">NDA</span>
+        </div>
+        <div class="quick-stat-box rld-stat">
+          <span class="stat-name">RLD</span>
+          <span class="stat-num" id="hdr-rld-count">8</span>
+          <span class="stat-tag">NDA</span>
+        </div>
+        <div class="quick-stat-box sbsp-stat">
+          <span class="stat-name">SBSP</span>
+          <span class="stat-num" id="hdr-sbsp-count">6</span>
+          <span class="stat-tag">NDA</span>
+        </div>
+        <div class="quick-stat-box inc-stat">
+          <span class="stat-name">INC</span>
+          <span class="stat-num" id="hdr-inc-count">2</span>
+          <span class="stat-tag">INDIA</span>
+        </div>
+        <div class="quick-stat-box bsp-stat">
+          <span class="stat-name">BSP</span>
+          <span class="stat-num" id="hdr-bsp-count">1</span>
+          <span class="stat-tag">BSP</span>
+        </div>
+        <div class="quick-stat-box oth-stat">
+          <span class="stat-name">Others</span>
+          <span class="stat-num" id="hdr-oth-count">10</span>
+          <span class="stat-tag">JDL/NISHAD</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- UP Heritage Showcase Banner (Light, Tasteful, Cultural) -->
+    <div class="heritage-strip">
+      <div class="heritage-label">
+        <i data-lucide="landmark"></i>
+        <span>Uttar Pradesh Heritage Highlights</span>
+      </div>
+      <div class="heritage-cards">
+        <div class="heritage-chip active" data-img="vidhan_bhavan" data-title="Vidhan Bhavan, Lucknow" data-desc="The seat of the Uttar Pradesh Legislative Assembly (403 MLAs) in Lucknow.">
+          <img src="assets/images/vidhan_bhavan.jpg" alt="Vidhan Bhavan Lucknow">
+          <span>Vidhan Bhavan, Lucknow</span>
+        </div>
+        <div class="heritage-chip" data-img="varanasi_ghats" data-title="Kashi Ghats, Varanasi" data-desc="The timeless spiritual capital along sacred river Ganga in Eastern UP (Purvanchal).">
+          <img src="assets/images/varanasi_ghats.jpg" alt="Varanasi Ghats">
+          <span>Ganga Ghats, Varanasi</span>
+        </div>
+        <div class="heritage-chip" data-img="lucknow_rumi" data-title="Rumi Darwaza, Lucknow" data-desc="Awadhi architectural marvel constructed by Nawab Asaf-ud-Daula in 1784.">
+          <img src="assets/images/lucknow_rumi.jpg" alt="Rumi Darwaza Lucknow">
+          <span>Rumi Darwaza, Lucknow</span>
+        </div>
+        <div class="heritage-chip" data-img="ayodhya_temple" data-title="Shri Ram Mandir, Ayodhya" data-desc="Grand traditional temple architecture along river Saryu in Awadh.">
+          <img src="assets/images/ayodhya_temple.jpg" alt="Ayodhya Ram Mandir">
+          <span>Ram Mandir, Ayodhya</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- View Switcher & Global Filters Bar -->
+  <section class="controls-section">
+    <div class="controls-container">
+      <!-- Left: Navigation Tabs -->
+      <div class="view-tabs" role="tablist">
+        <button class="tab-btn active" id="tab-map-btn" role="tab" aria-selected="true">
+          <i data-lucide="map"></i>
+          <span>Interactive Map</span>
+        </button>
+        <button class="tab-btn" id="tab-simulator-btn" role="tab" aria-selected="false">
+          <i data-lucide="sliders"></i>
+          <span>Vote % Simulator (2027)</span>
+        </button>
+        <button class="tab-btn" id="tab-table-btn" role="tab" aria-selected="false">
+          <i data-lucide="table"></i>
+          <span>All 403 Seats Directory</span>
+        </button>
+        <button class="tab-btn" id="tab-analytics-btn" role="tab" aria-selected="false">
+          <i data-lucide="bar-chart-3"></i>
+          <span>Battleground Analysis</span>
+        </button>
+      </div>
+
+      <!-- Center: Universal Search with Autocomplete -->
+      <div class="search-box-wrapper">
+        <i data-lucide="search" class="search-icon"></i>
+        <input type="text" id="universal-search-input" placeholder="Search any constituency, MLA, or district (e.g. Lucknow, Varanasi, Karhal, Yogi, Akhilesh)..." autocomplete="off">
+        <button id="clear-search-btn" class="clear-btn" title="Clear search" style="display: none;">
+          <i data-lucide="x"></i>
+        </button>
+        <div id="search-autocomplete-list" class="autocomplete-dropdown"></div>
+      </div>
+
+      <!-- Right: Map Layer Switcher (2022 vs 2017 vs 2024 vs 2019 vs 2027 Sim) -->
+      <div class="layer-selector-group">
+        <span class="layer-label">Map Color Mode:</span>
+        <div class="layer-buttons">
+          <button class="layer-btn active" data-layer="2022" title="2022 Vidhan Sabha Winners (Current MLAs)">
+            <strong>2022</strong> Assembly
+          </button>
+          <button class="layer-btn" data-layer="2017" title="2017 Vidhan Sabha Results">
+            <strong>2017</strong> Assembly
+          </button>
+          <button class="layer-btn" data-layer="2024_ls" title="2024 Lok Sabha Segment Trends">
+            <strong>2024</strong> LS Trend
+          </button>
+          <button class="layer-btn" data-layer="2019_ls" title="2019 Lok Sabha Segment Trends">
+            <strong>2019</strong> LS Trend
+          </button>
+          <button class="layer-btn sim-layer-btn" data-layer="simulated" title="Simulate 2027 based on your customized Vote % Swings">
+            <i data-lucide="zap"></i> <strong>2027 Sim</strong>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Secondary Filter Pills Bar -->
+    <div class="filter-pills-bar">
+      <!-- Region Filter -->
+      <div class="filter-cluster">
+        <span class="cluster-label"><i data-lucide="compass"></i> Region:</span>
+        <div class="pill-group" id="region-filter-pills">
+          <button class="pill active" data-region="all">All Regions (403)</button>
+          <button class="pill" data-region="Paschim (Western UP)">Paschim UP (77)</button>
+          <button class="pill" data-region="Rohilkhand">Rohilkhand (50)</button>
+          <button class="pill" data-region="Awadh (Central UP)">Awadh (82)</button>
+          <button class="pill" data-region="Purvanchal (Eastern UP)">Purvanchal (112)</button>
+          <button class="pill" data-region="Bundelkhand">Bundelkhand (19)</button>
+          <button class="pill" data-region="Doab">Doab (63)</button>
+        </div>
+      </div>
+
+      <!-- Current Party Filter -->
+      <div class="filter-cluster">
+        <span class="cluster-label"><i data-lucide="flag"></i> Party:</span>
+        <div class="pill-group" id="party-filter-pills">
+          <button class="pill active" data-party="all">All</button>
+          <button class="pill party-pill bjp" data-party="BJP">BJP</button>
+          <button class="pill party-pill sp" data-party="SP">SP</button>
+          <button class="pill party-pill rld" data-party="RLD">RLD</button>
+          <button class="pill party-pill ads" data-party="Apna Dal (Soneylal)">AD(S)</button>
+          <button class="pill party-pill sbsp" data-party="Suheldev Bharatiya Samaj Party">SBSP</button>
+          <button class="pill party-pill inc" data-party="INC">INC</button>
+          <button class="pill party-pill bsp" data-party="BSP">BSP</button>
+        </div>
+      </div>
+
+      <!-- Margin Filter -->
+      <div class="filter-cluster">
+        <span class="cluster-label"><i data-lucide="gauge"></i> 2022 Margin:</span>
+        <div class="pill-group" id="margin-filter-pills">
+          <button class="pill active" data-margin="all">All Margins</button>
+          <button class="pill" data-margin="battleground" title="Won by under 5,000 votes">🔥 Razor Close (&lt;5k)</button>
+          <button class="pill" data-margin="tight" title="Won by 5,000 - 15,000 votes">Tight (5k-15k)</button>
+          <button class="pill" data-margin="safe" title="Won by over 25,000 votes">Safe (&gt;25k)</button>
+        </div>
+      </div>
+
+      <!-- Reset Filter Button -->
+      <button id="reset-all-filters" class="reset-link-btn" title="Reset all applied filters">
+        <i data-lucide="rotate-ccw"></i> Reset
+      </button>
+    </div>
+  </section>
+
+  <!-- Main Content Layout -->
+  <main class="main-content">
+    
+    <!-- VIEW 1: MAP VIEW -->
+    <div id="view-map" class="content-view active">
+      <div class="map-layout-grid">
+        <!-- Interactive Map Container -->
+        <div class="map-card">
+          <div class="map-card-header">
+            <div class="map-title-row">
+              <div class="map-info">
+                <h2 id="active-map-heading">2022 Vidhan Sabha: Current Assembly Composition</h2>
+                <p id="active-map-sub">Showing all 403 constituencies colored by winning party. Click any constituency on the map to view in-depth 2017, 2019, 2022, and 2024 results.</p>
+              </div>
+              <div class="map-actions">
+                <span id="filtered-seat-counter" class="counter-badge">Showing 403 of 403 seats</span>
+                <button id="btn-reset-map-zoom" class="icon-action-btn" title="Reset Map View to Full UP">
+                  <i data-lucide="maximize-2"></i> Reset View
+                </button>
+              </div>
+            </div>
+
+            <!-- Party Legend -->
+            <div class="party-legend-row" id="map-party-legend">
+              <div class="legend-item"><span class="swatch" style="background: #f97316;"></span> BJP</div>
+              <div class="legend-item"><span class="swatch" style="background: #dc2626;"></span> SP</div>
+              <div class="legend-item"><span class="swatch" style="background: #16a34a;"></span> RLD</div>
+              <div class="legend-item"><span class="swatch" style="background: #7c3aed;"></span> Apna Dal (S)</div>
+              <div class="legend-item"><span class="swatch" style="background: #eab308;"></span> SBSP</div>
+              <div class="legend-item"><span class="swatch" style="background: #0284c7;"></span> INC (Congress)</div>
+              <div class="legend-item"><span class="swatch" style="background: #2563eb;"></span> BSP</div>
+              <div class="legend-item"><span class="swatch" style="background: #06b6d4;"></span> NISHAD</div>
+              <div class="legend-item"><span class="swatch" style="background: #d97706;"></span> Jansatta Dal (L)</div>
+              <div class="legend-item"><span class="swatch" style="background: #94a3b8;"></span> Independent / Others</div>
+            </div>
+
+            <!-- Quick Vote % Swing Bar directly above the map -->
+            <div class="map-swing-quickbar">
+              <div class="swing-quickbar-left">
+                <span class="swing-icon-tag"><i data-lucide="sliders"></i> Quick Vote % Swing:</span>
+                
+                <div class="quick-swing-control">
+                  <span class="q-party bjp">BJP:</span>
+                  <button class="step-btn" data-party="bjp" data-step="-0.5">-</button>
+                  <span class="q-val" id="q-bjp-val">0.0%</span>
+                  <button class="step-btn" data-party="bjp" data-step="+0.5">+</button>
+                </div>
+
+                <div class="quick-swing-control">
+                  <span class="q-party sp">SP:</span>
+                  <button class="step-btn" data-party="sp" data-step="-0.5">-</button>
+                  <span class="q-val" id="q-sp-val">0.0%</span>
+                  <button class="step-btn" data-party="sp" data-step="+0.5">+</button>
+                </div>
+
+                <div class="quick-swing-control">
+                  <span class="q-party bsp">BSP:</span>
+                  <button class="step-btn" data-party="bsp" data-step="-0.5">-</button>
+                  <span class="q-val" id="q-bsp-val">0.0%</span>
+                  <button class="step-btn" data-party="bsp" data-step="+0.5">+</button>
+                </div>
+
+                <div class="quick-swing-control">
+                  <span class="q-party inc">INC:</span>
+                  <button class="step-btn" data-party="inc" data-step="-0.5">-</button>
+                  <span class="q-val" id="q-inc-val">0.0%</span>
+                  <button class="step-btn" data-party="inc" data-step="+0.5">+</button>
+                </div>
+              </div>
+
+              <div class="swing-quickbar-right">
+                <span class="quick-sim-result" id="quick-sim-summary">Projected 2027: <strong>BJP+ 273 | SP+ 125</strong></span>
+                <button id="btn-quick-reset-swing" class="reset-sim-btn" title="Reset Swings to 0%"><i data-lucide="rotate-ccw"></i> Reset</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Leaflet Map Container -->
+          <div class="map-wrapper">
+            <div id="up-election-map" class="leaflet-container-custom"></div>
+            
+            <!-- Map Overlay Legend / Guide -->
+            <div class="map-hint-banner">
+              <i data-lucide="info"></i>
+              <span>Hover over any constituency to preview &bull; <strong>Click to open multi-year comparison card</strong></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sidebar: Active Selected Constituency Details Card -->
+        <aside class="sidebar-details-card" id="constituency-sidebar">
+          <!-- Default State when no seat clicked -->
+          <div id="sidebar-placeholder" class="sidebar-placeholder">
+            <div class="placeholder-graphic">
+              <img src="assets/images/vidhan_bhavan.jpg" alt="Vidhan Bhavan" class="placeholder-img">
+              <div class="placeholder-icon-circle">
+                <i data-lucide="map-pin"></i>
+              </div>
+            </div>
+            <h3>Select Any Constituency</h3>
+            <p>Click on any seat on the Uttar Pradesh map or search above to reveal the current MLA name, victory margins, and comparative distribution for <strong>2017, 2019, 2022, &amp; 2024</strong>.</p>
+            <div class="quick-picks">
+              <span class="picks-title">High Profile Battlegrounds:</span>
+              <div class="picks-tags">
+                <button class="pick-tag" data-ac="300">#300 Gorakhpur Urban (Yogi Adityanath)</button>
+                <button class="pick-tag" data-ac="110">#110 Karhal (Akhilesh Yadav)</button>
+                <button class="pick-tag" data-ac="388">#388 Varanasi Cantt</button>
+                <button class="pick-tag" data-ac="174">#174 Lucknow Central</button>
+                <button class="pick-tag" data-ac="275">#275 Ayodhya</button>
+                <button class="pick-tag" data-ac="61">#61 Noida</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Filled State when seat is clicked -->
+          <div id="sidebar-seat-details" class="sidebar-seat-details" style="display: none;">
+            <!-- Header with AC name & Close Button -->
+            <div class="seat-card-header">
+              <div class="seat-title-block">
+                <div class="seat-badge-row">
+                  <span class="ac-number-pill" id="card-ac-no">AC #174</span>
+                  <span class="ac-region-pill" id="card-region">Awadh</span>
+                  <span class="ac-dist-pill" id="card-district">Lucknow</span>
+                </div>
+                <h3 class="seat-name-large" id="card-ac-name">Lucknow Central</h3>
+                <p class="seat-pc-link" id="card-pc-name">Part of Lucknow Parliamentary Constituency</p>
+              </div>
+              <button id="close-sidebar-btn" class="close-card-btn" title="Close details">
+                <i data-lucide="x"></i>
+              </button>
+            </div>
+
+            <!-- Current MLA Banner -->
+            <div class="current-mla-banner">
+              <div class="mla-avatar">
+                <i data-lucide="user-check"></i>
+              </div>
+              <div class="mla-info">
+                <div class="mla-label">CURRENT SITTING MLA (2022–2027)</div>
+                <div class="mla-name" id="card-mla-name">Ravidas Mehotra</div>
+                <div class="mla-party-row">
+                  <span class="mla-party-badge" id="card-mla-party">Samajwadi Party</span>
+                  <span class="mla-margin-info" id="card-mla-margin">Won by 10,935 votes</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Individual Seat Vote % Simulator -->
+            <div class="seat-vote-editor">
+              <div class="editor-head">
+                <div class="editor-title"><i data-lucide="sliders"></i> Change Vote % for this Seat</div>
+                <button id="btn-reset-seat-sim" class="seat-reset-btn" title="Reset to official 2022 result">Reset</button>
+              </div>
+              <p class="editor-sub">Adjust candidate vote shares to simulate a 2027 outcome for this specific constituency:</p>
+              
+              <div class="slider-row">
+                <div class="slider-labels">
+                  <span class="cand-label" id="seat-sim-p1-label">Winner Vote %:</span>
+                  <span class="cand-val" id="seat-sim-p1-val">49.6%</span>
+                </div>
+                <input type="range" id="seat-sim-p1-slider" min="20" max="80" step="0.5" value="49.6">
+              </div>
+
+              <div class="slider-row">
+                <div class="slider-labels">
+                  <span class="cand-label" id="seat-sim-p2-label">Runner-up Vote %:</span>
+                  <span class="cand-val" id="seat-sim-p2-val">44.4%</span>
+                </div>
+                <input type="range" id="seat-sim-p2-slider" min="20" max="80" step="0.5" value="44.4">
+              </div>
+
+              <!-- Live Simulated Result Box for this seat -->
+              <div class="seat-sim-result" id="seat-sim-result-box">
+                <span class="sim-badge" id="seat-sim-status-badge">Official 2022 Winner</span>
+                <div class="sim-winner-line" id="seat-sim-winner-line">Winner: <strong>Ravidas Mehotra (SP)</strong></div>
+                <div class="sim-margin-line" id="seat-sim-margin-line">Projected Margin: +5.2%</div>
+              </div>
+            </div>
+
+            <!-- Multi-Year Election Results Accordion / Cards -->
+            <div class="election-timeline-wrapper">
+              <h4 class="timeline-heading">
+                <i data-lucide="history"></i>
+                <span>Constituency Results Across Elections</span>
+              </h4>
+
+              <!-- 2022 Vidhan Sabha Result Card -->
+              <div class="res-card res-2022">
+                <div class="res-card-top">
+                  <span class="res-year-tag"><i data-lucide="award"></i> 2022 Vidhan Sabha</span>
+                  <span class="res-status-tag" id="card-2022-margin">Margin: 10,935</span>
+                </div>
+                <div class="res-candidates-grid">
+                  <div class="cand-row winner">
+                    <span class="cand-role">Winner:</span>
+                    <span class="cand-name" id="card-2022-winner">Ravidas Mehotra</span>
+                    <span class="cand-party-pill" id="card-2022-wparty">SP</span>
+                    <span class="cand-votes" id="card-2022-wvotes">1,04,488 (49.6%)</span>
+                  </div>
+                  <div class="cand-row runner">
+                    <span class="cand-role">Runner-up:</span>
+                    <span class="cand-name" id="card-2022-runner">Rajnish Kumar Gupta</span>
+                    <span class="cand-party-pill" id="card-2022-rparty">BJP</span>
+                    <span class="cand-votes" id="card-2022-rvotes">93,553 (44.4%)</span>
+                  </div>
+                </div>
+                <div class="res-meta-footer">
+                  <span id="card-2022-turnout">Turnout: 56.81%</span>
+                  <span class="lead-diff">Vote Lead: <strong id="card-2022-pctdiff">+5.19%</strong></span>
+                </div>
+              </div>
+
+              <!-- 2017 Vidhan Sabha Result Card -->
+              <div class="res-card res-2017">
+                <div class="res-card-top">
+                  <span class="res-year-tag"><i data-lucide="calendar"></i> 2017 Vidhan Sabha</span>
+                  <span class="res-status-tag" id="card-2017-margin">Margin: 5,094</span>
+                </div>
+                <div class="res-candidates-grid">
+                  <div class="cand-row winner">
+                    <span class="cand-role">Winner:</span>
+                    <span class="cand-name" id="card-2017-winner">Brajesh Pathak</span>
+                    <span class="cand-party-pill" id="card-2017-wparty">BJP</span>
+                    <span class="cand-votes" id="card-2017-wvotes">78,400</span>
+                  </div>
+                  <div class="cand-row runner">
+                    <span class="cand-role">Runner-up:</span>
+                    <span class="cand-name" id="card-2017-runner">Ravidas Mehrotra</span>
+                    <span class="cand-party-pill" id="card-2017-rparty">SP</span>
+                    <span class="cand-votes" id="card-2017-rvotes">73,306</span>
+                  </div>
+                </div>
+                <div class="res-meta-footer">
+                  <span id="card-2017-swing">2017 to 2022 Shift: <strong class="shift-tag">SP Gain from BJP</strong></span>
+                </div>
+              </div>
+
+              <!-- 2024 Lok Sabha Trend Card -->
+              <div class="res-card res-2024ls">
+                <div class="res-card-top">
+                  <span class="res-year-tag"><i data-lucide="check-circle-2"></i> 2024 Lok Sabha Trend</span>
+                  <span class="res-status-tag alliance" id="card-2024-alliance">NDA Lead</span>
+                </div>
+                <div class="res-candidates-grid">
+                  <div class="cand-row winner">
+                    <span class="cand-role">PC Winner:</span>
+                    <span class="cand-name" id="card-2024-mp">Rajnath Singh</span>
+                    <span class="cand-party-pill" id="card-2024-mpparty">BJP</span>
+                    <span class="cand-votes" id="card-2024-mpvotes">612,709 (53.6%)</span>
+                  </div>
+                  <div class="cand-row runner">
+                    <span class="cand-role">PC Runner:</span>
+                    <span class="cand-name" id="card-2024-mprunner">Ravidas Mehrotra</span>
+                    <span class="cand-party-pill" id="card-2024-mprparty">SP</span>
+                    <span class="cand-votes" id="card-2024-mprvotes">Margin: 1,35,159</span>
+                  </div>
+                </div>
+                <div class="res-meta-footer">
+                  <span>Lok Sabha: <strong id="card-2024-pcname">Lucknow</strong></span>
+                  <span class="indicator-badge" id="card-2024-alliance-badge">INDIA vs NDA</span>
+                </div>
+              </div>
+
+              <!-- 2019 Lok Sabha Trend Card -->
+              <div class="res-card res-2019ls">
+                <div class="res-card-top">
+                  <span class="res-year-tag"><i data-lucide="archive"></i> 2019 Lok Sabha Trend</span>
+                  <span class="res-status-tag" id="card-2019-party">BJP MP</span>
+                </div>
+                <div class="res-candidates-grid">
+                  <div class="cand-row winner">
+                    <span class="cand-role">PC Winner:</span>
+                    <span class="cand-name" id="card-2019-mp">Rajnath Singh</span>
+                    <span class="cand-party-pill" id="card-2019-mpparty">BJP</span>
+                    <span class="cand-votes" id="card-2019-mpvotes">633,026 (56.6%)</span>
+                  </div>
+                  <div class="cand-row runner">
+                    <span class="cand-role">PC Runner:</span>
+                    <span class="cand-name" id="card-2019-mprunner">Poonam Sinha (SP)</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Constituency Distribution Chart Section -->
+            <div class="chart-section">
+              <h4 class="chart-heading">
+                <i data-lucide="trending-up"></i>
+                <span>Constituency Vote Distribution & Trend</span>
+              </h4>
+              <div class="chart-container">
+                <canvas id="constituencyDistributionChart"></canvas>
+              </div>
+            </div>
+
+            <!-- 2027 Battleground Outlook -->
+            <div class="outlook-box" id="card-outlook-box">
+              <div class="outlook-badge"><i data-lucide="zap"></i> 2027 Election Outlook</div>
+              <p class="outlook-text" id="card-outlook-text">
+                Key bellwether seat in Central UP. After flipping from BJP to SP in 2022 with a 10,935 margin, both NDA and INDIA alliance identify this as a top-priority battleground for the 2027 state election.
+              </p>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <!-- VIEW 2: 2027 VOTE % SIMULATOR STUDIO -->
+    <div id="view-simulator" class="content-view">
+      <div class="sim-studio-card">
+        <div class="sim-header">
+          <div class="sim-header-titles">
+            <span class="sim-tag"><i data-lucide="zap"></i> Interactive Electoral Modeling Engine</span>
+            <h2>UP Election 2027: Interactive Vote % Swing Simulator</h2>
+            <p>Shift party vote shares to model 2027 election scenarios across all 403 Uttar Pradesh constituencies. Watch seats flip in real-time and observe coalition majorities.</p>
+          </div>
+          <div class="sim-header-actions">
+            <button id="btn-view-sim-map" class="export-btn" title="View these simulated winners on the full map">
+              <i data-lucide="map"></i> Visualize on Map
+            </button>
+            <button id="btn-reset-all-sim" class="icon-action-btn" title="Reset all swings to 0%">
+              <i data-lucide="rotate-ccw"></i> Reset All
+            </button>
+          </div>
+        </div>
+
+        <!-- Presets & Baseline Selection Bar -->
+        <div class="sim-presets-bar">
+          <div class="preset-group">
+            <span class="group-title"><i data-lucide="database"></i> Baseline Election:</span>
+            <div class="pill-group" id="sim-baseline-pills">
+              <button class="pill active" data-base="2022">2022 Vidhan Sabha (Official)</button>
+              <button class="pill" data-base="2024_ls">2024 Lok Sabha (Segment Trends)</button>
+              <button class="pill" data-base="2017">2017 Vidhan Sabha</button>
+              <button class="pill" data-base="2019_ls">2019 Lok Sabha</button>
+            </div>
+          </div>
+
+          <div class="preset-group">
+            <span class="group-title"><i data-lucide="sparkles"></i> 1-Click Scenarios:</span>
+            <div class="pill-group" id="sim-preset-scenarios">
+              <button class="pill scenario-pill" data-scenario="2024_replay">⚡ 2024 LS Replay (INDIA 225)</button>
+              <button class="pill scenario-pill" data-scenario="sp_surge">🚩 SP +3.5% Surge</button>
+              <button class="pill scenario-pill" data-scenario="bjp_consolidation">🟠 BJP +3.0% Push</button>
+              <button class="pill scenario-pill" data-scenario="bsp_shift">⚖️ BSP Base to SP (+4%)</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Simulator Core Layout: Sliders (Left) + Projected Assembly Dashboard (Right) -->
+        <div class="sim-core-grid">
+          <!-- Left: Party Vote % Swing Sliders -->
+          <div class="sim-sliders-panel">
+            <h3 class="panel-title"><i data-lucide="sliders-horizontal"></i> Adjust Party Vote % Swings</h3>
+            <p class="panel-sub">Change statewide vote share (+/- %) for each party to calculate seat flips across all 403 constituencies:</p>
+
+            <!-- BJP Swing Slider -->
+            <div class="sim-slider-box bjp-box">
+              <div class="slider-meta">
+                <span class="party-name bjp-name">BJP (Bharatiya Janata Party)</span>
+                <div class="stepper-group">
+                  <button class="stepper-btn" data-party="bjp" data-delta="-0.5">-0.5%</button>
+                  <span class="swing-display" id="sim-bjp-display">0.0%</span>
+                  <button class="stepper-btn" data-party="bjp" data-delta="+0.5">+0.5%</button>
+                </div>
+              </div>
+              <input type="range" class="party-slider bjp-slider" id="slider-bjp" min="-15" max="15" step="0.5" value="0">
+              <div class="range-scale">
+                <span>-15% Swing</span>
+                <span class="zero-tick">0% (Baseline)</span>
+                <span>+15% Swing</span>
+              </div>
+            </div>
+
+            <!-- SP Swing Slider -->
+            <div class="sim-slider-box sp-box">
+              <div class="slider-meta">
+                <span class="party-name sp-name">SP (Samajwadi Party)</span>
+                <div class="stepper-group">
+                  <button class="stepper-btn" data-party="sp" data-delta="-0.5">-0.5%</button>
+                  <span class="swing-display" id="sim-sp-display">0.0%</span>
+                  <button class="stepper-btn" data-party="sp" data-delta="+0.5">+0.5%</button>
+                </div>
+              </div>
+              <input type="range" class="party-slider sp-slider" id="slider-sp" min="-15" max="15" step="0.5" value="0">
+              <div class="range-scale">
+                <span>-15% Swing</span>
+                <span class="zero-tick">0% (Baseline)</span>
+                <span>+15% Swing</span>
+              </div>
+            </div>
+
+            <!-- BSP Swing Slider -->
+            <div class="sim-slider-box bsp-box">
+              <div class="slider-meta">
+                <span class="party-name bsp-name">BSP (Bahujan Samaj Party)</span>
+                <div class="stepper-group">
+                  <button class="stepper-btn" data-party="bsp" data-delta="-0.5">-0.5%</button>
+                  <span class="swing-display" id="sim-bsp-display">0.0%</span>
+                  <button class="stepper-btn" data-party="bsp" data-delta="+0.5">+0.5%</button>
+                </div>
+              </div>
+              <input type="range" class="party-slider bsp-slider" id="slider-bsp" min="-10" max="10" step="0.5" value="0">
+              <div class="range-scale">
+                <span>-10%</span>
+                <span class="zero-tick">0%</span>
+                <span>+10%</span>
+              </div>
+            </div>
+
+            <!-- INC Swing Slider -->
+            <div class="sim-slider-box inc-box">
+              <div class="slider-meta">
+                <span class="party-name inc-name">INC (Congress)</span>
+                <div class="stepper-group">
+                  <button class="stepper-btn" data-party="inc" data-delta="-0.5">-0.5%</button>
+                  <span class="swing-display" id="sim-inc-display">0.0%</span>
+                  <button class="stepper-btn" data-party="inc" data-delta="+0.5">+0.5%</button>
+                </div>
+              </div>
+              <input type="range" class="party-slider inc-slider" id="slider-inc" min="-10" max="10" step="0.5" value="0">
+              <div class="range-scale">
+                <span>-10%</span>
+                <span class="zero-tick">0%</span>
+                <span>+10%</span>
+              </div>
+            </div>
+
+            <!-- RLD / Allies Swing Slider -->
+            <div class="sim-slider-box rld-box">
+              <div class="slider-meta">
+                <span class="party-name rld-name">RLD / Regional Allies</span>
+                <div class="stepper-group">
+                  <button class="stepper-btn" data-party="rld" data-delta="-0.5">-0.5%</button>
+                  <span class="swing-display" id="sim-rld-display">0.0%</span>
+                  <button class="stepper-btn" data-party="rld" data-delta="+0.5">+0.5%</button>
+                </div>
+              </div>
+              <input type="range" class="party-slider rld-slider" id="slider-rld" min="-10" max="10" step="0.5" value="0">
+              <div class="range-scale">
+                <span>-10%</span>
+                <span class="zero-tick">0%</span>
+                <span>+10%</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Live Projected Assembly 2027 Dashboard -->
+          <div class="sim-results-panel">
+            <h3 class="panel-title"><i data-lucide="pie-chart"></i> Projected 2027 Assembly (403 Seats)</h3>
+            
+            <!-- Majority Banner Status -->
+            <div class="sim-majority-banner" id="sim-majority-banner">
+              <div class="maj-icon"><i data-lucide="award"></i></div>
+              <div class="maj-text">
+                <div class="maj-headline" id="sim-majority-headline">NDA Projected to Retain Majority</div>
+                <div class="maj-sub" id="sim-majority-sub">Projected 273 seats (Majority mark: 202 seats)</div>
+              </div>
+            </div>
+
+            <!-- Dynamic Projected Seats KPI Cards -->
+            <div class="sim-kpis-grid">
+              <div class="sim-kpi bjp-kpi">
+                <span class="kpi-tag">BJP+ (NDA)</span>
+                <span class="kpi-num" id="sim-bjp-seats">273</span>
+                <span class="kpi-delta" id="sim-bjp-delta">0 vs baseline</span>
+              </div>
+              <div class="sim-kpi sp-kpi">
+                <span class="kpi-tag">SP+ (INDIA)</span>
+                <span class="kpi-num" id="sim-sp-seats">125</span>
+                <span class="kpi-delta" id="sim-sp-delta">0 vs baseline</span>
+              </div>
+              <div class="sim-kpi bsp-kpi">
+                <span class="kpi-tag">BSP</span>
+                <span class="kpi-num" id="sim-bsp-seats">1</span>
+                <span class="kpi-delta" id="sim-bsp-delta">0 vs baseline</span>
+              </div>
+              <div class="sim-kpi oth-kpi">
+                <span class="kpi-tag">Others</span>
+                <span class="kpi-num" id="sim-oth-seats">4</span>
+                <span class="kpi-delta" id="sim-oth-delta">0 vs baseline</span>
+              </div>
+            </div>
+
+            <!-- Interactive Dynamic Majority Progress Bar -->
+            <div class="sim-bar-wrapper">
+              <div class="sim-bar-labels">
+                <span id="sim-lbl-india">INDIA Alliance: 125 Seats</span>
+                <span class="maj-target-pill">Majority: 202</span>
+                <span id="sim-lbl-nda">NDA Alliance: 273 Seats</span>
+              </div>
+              <div class="sim-progress-track">
+                <div class="sim-track-seg india-seg" id="sim-track-india" style="width: 31%;">31%</div>
+                <div class="sim-track-line" title="Majority 202 Mark"></div>
+                <div class="sim-track-seg nda-seg" id="sim-track-nda" style="width: 68%;">68%</div>
+                <div class="sim-track-seg oth-seg" id="sim-track-oth" style="width: 1%;">1%</div>
+              </div>
+            </div>
+
+            <!-- Flipped Seats Breakdown Header -->
+            <div class="flipped-section-head">
+              <div class="flipped-title">
+                <i data-lucide="arrow-left-right"></i>
+                <span id="flipped-count-title">Seats Flipped: <strong>0 seats</strong></span>
+              </div>
+              <span class="flipped-help">Click any flipped seat to inspect on map</span>
+            </div>
+
+            <!-- Flipped Seats Scrollable Container -->
+            <div class="flipped-seats-list" id="flipped-seats-list">
+              <div class="empty-flip-state">
+                <i data-lucide="check-circle-2"></i>
+                <span>Move any vote % slider on the left to see seats flip between coalitions!</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW 3: FULL 403-SEAT TABLE DIRECTORY -->
+    <div id="view-table" class="content-view">
+      <div class="table-card">
+        <div class="table-card-header">
+          <div class="table-header-info">
+            <h2>Complete Uttar Pradesh 403 Assembly Constituencies Directory</h2>
+            <p>Search, filter, and inspect detailed electoral statistics, sitting MLAs, and historical margins across all seats.</p>
+          </div>
+          <div class="table-actions">
+            <button id="btn-export-csv" class="export-btn" title="Download entire dataset as CSV">
+              <i data-lucide="download"></i> Export CSV
+            </button>
+          </div>
+        </div>
+
+        <div class="table-responsive-wrapper">
+          <table class="data-table" id="seats-table">
+            <thead>
+              <tr>
+                <th data-sort="ac_no" class="sortable">AC # <i data-lucide="chevrons-up-down"></i></th>
+                <th data-sort="ac_name" class="sortable">Constituency <i data-lucide="chevrons-up-down"></i></th>
+                <th data-sort="district" class="sortable">District <i data-lucide="chevrons-up-down"></i></th>
+                <th data-sort="region" class="sortable">Region <i data-lucide="chevrons-up-down"></i></th>
+                <th data-sort="current_mla" class="sortable">Current MLA (2022-27) <i data-lucide="chevrons-up-down"></i></th>
+                <th data-sort="current_party" class="sortable">Party <i data-lucide="chevrons-up-down"></i></th>
+                <th data-sort="margin" class="sortable">2022 Margin <i data-lucide="chevrons-up-down"></i></th>
+                <th data-sort="win_2017" class="sortable">2017 Winner <i data-lucide="chevrons-up-down"></i></th>
+                <th data-sort="win_2024" class="sortable">2024 LS Trend <i data-lucide="chevrons-up-down"></i></th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="table-body">
+              <!-- Dynamically rendered rows -->
+            </tbody>
+          </table>
+        </div>
+
+        <div class="table-footer">
+          <span id="table-entries-count">Showing 403 entries</span>
+          <div class="pagination-controls" id="table-pagination"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW 3: 2027 BATTLEGROUND & ANALYTICS -->
+    <div id="view-analytics" class="content-view">
+      <div class="analytics-grid">
+        <!-- Key Battleground Summary -->
+        <div class="analytics-card span-2">
+          <div class="card-head">
+            <div class="head-icon"><i data-lucide="crosshair"></i></div>
+            <div>
+              <h3>2027 UP Election Battleground Dynamics</h3>
+              <p>Key strategic indicators comparing 2022 Assembly baseline with 2024 Lok Sabha trends</p>
+            </div>
+          </div>
+          
+          <div class="battleground-kpis">
+            <div class="kpi-card">
+              <span class="kpi-title">Assembly Majority Mark</span>
+              <span class="kpi-value highlight">202 <small>/ 403</small></span>
+              <span class="kpi-sub">Total 403 seats in UP Assembly</span>
+            </div>
+            <div class="kpi-card">
+              <span class="kpi-title">2022 Vidhan Sabha Winner</span>
+              <span class="kpi-value bjp-text">BJP+ 273 <small>seats</small></span>
+              <span class="kpi-sub">BJP (255) + Allies (18)</span>
+            </div>
+            <div class="kpi-card">
+              <span class="kpi-title">2024 Lok Sabha Segment Shift</span>
+              <span class="kpi-value sp-text">INDIA 225 <small>segments</small></span>
+              <span class="kpi-sub">Crossed the 202 majority mark in 2024 LS</span>
+            </div>
+            <div class="kpi-card">
+              <span class="kpi-title">Ultra-Close Battlegrounds</span>
+              <span class="kpi-value">48 <small>seats</small></span>
+              <span class="kpi-sub">Won by &lt;5,000 votes in 2022</span>
+            </div>
+          </div>
+
+          <!-- Tug-of-war majority visual bar -->
+          <div class="majority-bar-container">
+            <div class="bar-legend">
+              <span><strong>INDIA Alliance</strong> (SP + INC): 225 Segments (2024 LS)</span>
+              <span class="majority-marker-label"><strong>Majority: 202</strong></span>
+              <span><strong>NDA Alliance</strong> (BJP + RLD + AD(S)): 173 Segments</span>
+            </div>
+            <div class="progress-majority-bar">
+              <div class="bar-seg india-seg" style="width: 55.8%;">55.8% (225)</div>
+              <div class="majority-line" title="Majority 202 Mark"></div>
+              <div class="bar-seg nda-seg" style="width: 43.0%;">43.0% (173)</div>
+              <div class="bar-seg oth-seg" style="width: 1.2%;">ASP (5)</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Regional Distribution Breakdown Card -->
+        <div class="analytics-card">
+          <div class="card-head">
+            <div class="head-icon"><i data-lucide="pie-chart"></i></div>
+            <div>
+              <h3>Regional Seat Distribution</h3>
+              <p>Breakdown across UP's 6 cultural regions</p>
+            </div>
+          </div>
+          <div class="region-stats-list">
+            <div class="region-stat-item">
+              <div class="reg-meta">
+                <span class="reg-name">Purvanchal (Eastern UP)</span>
+                <span class="reg-count">112 Seats (28%)</span>
+              </div>
+              <div class="reg-bar"><div class="reg-fill" style="width: 28%; background: #f97316;"></div></div>
+            </div>
+            <div class="region-stat-item">
+              <div class="reg-meta">
+                <span class="reg-name">Awadh (Central UP)</span>
+                <span class="reg-count">82 Seats (20%)</span>
+              </div>
+              <div class="reg-bar"><div class="reg-fill" style="width: 20%; background: #dc2626;"></div></div>
+            </div>
+            <div class="region-stat-item">
+              <div class="reg-meta">
+                <span class="reg-name">Paschim UP (Western)</span>
+                <span class="reg-count">77 Seats (19%)</span>
+              </div>
+              <div class="reg-bar"><div class="reg-fill" style="width: 19%; background: #16a34a;"></div></div>
+            </div>
+            <div class="region-stat-item">
+              <div class="reg-meta">
+                <span class="reg-name">Doab / Lower Doab</span>
+                <span class="reg-count">63 Seats (16%)</span>
+              </div>
+              <div class="reg-bar"><div class="reg-fill" style="width: 16%; background: #0284c7;"></div></div>
+            </div>
+            <div class="region-stat-item">
+              <div class="reg-meta">
+                <span class="reg-name">Rohilkhand</span>
+                <span class="reg-count">50 Seats (12%)</span>
+              </div>
+              <div class="reg-bar"><div class="reg-fill" style="width: 12%; background: #7c3aed;"></div></div>
+            </div>
+            <div class="region-stat-item">
+              <div class="reg-meta">
+                <span class="reg-name">Bundelkhand</span>
+                <span class="reg-count">19 Seats (5%)</span>
+              </div>
+              <div class="reg-bar"><div class="reg-fill" style="width: 5%; background: #eab308;"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Margin Category Analysis -->
+        <div class="analytics-card">
+          <div class="card-head">
+            <div class="head-icon"><i data-lucide="shield-alert"></i></div>
+            <div>
+              <h3>2022 Victory Margin Spread</h3>
+              <p>Vulnerability spectrum of seats</p>
+            </div>
+          </div>
+          <div class="margin-spectrum-grid">
+            <div class="margin-box danger">
+              <span class="m-val">48 Seats</span>
+              <span class="m-lbl">&lt; 5,000 Margin</span>
+              <p>Razor-thin margin. Highest probability swing seats for 2027.</p>
+            </div>
+            <div class="margin-box warning">
+              <span class="m-val">96 Seats</span>
+              <span class="m-lbl">5,000 – 15,000 Margin</span>
+              <p>Competitive contests easily vulnerable to coalition arithmetic.</p>
+            </div>
+            <div class="margin-box info">
+              <span class="m-val">122 Seats</span>
+              <span class="m-lbl">15,000 – 30,000 Margin</span>
+              <p>Moderate lean seats requiring strong anti-incumbency to shift.</p>
+            </div>
+            <div class="margin-box success">
+              <span class="m-val">137 Seats</span>
+              <span class="m-lbl">&gt; 30,000 Margin</span>
+              <p>Decisive fortresses with solid party or candidate vote banks.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Photo Lightbox Modal for UP Heritage -->
+  <div id="heritage-lightbox" class="lightbox-modal">
+    <div class="lightbox-content">
+      <button class="lightbox-close" id="lightbox-close-btn"><i data-lucide="x"></i></button>
+      <img id="lightbox-img" src="" alt="UP Landmark">
+      <div class="lightbox-caption">
+        <h3 id="lightbox-title">Varanasi Ganga Ghats</h3>
+        <p id="lightbox-desc">Varanasi, Uttar Pradesh</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <span class="f-title">UP Election 2027 Electoral Intelligence Hub</span>
+        <span class="f-sub">Covering all 403 Vidhan Sabha Seats &bull; Data synchronized with official ECI records &amp; legislative documentation</span>
+      </div>
+      <div class="footer-meta">
+        <span>Legislative Assembly of Uttar Pradesh &bull; 18th Assembly (2022–2027) &bull; Next General Election: Early 2027</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <!-- Direct data scripts for universal compatibility (file:// and http://) -->
+  <script src="data/constituencies.js"></script>
+  <script src="data/up_map.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
